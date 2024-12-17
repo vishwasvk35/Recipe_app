@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json()); //convert the body of request and response into json
 app.use(cors()); //used to avoid security related errors
 
-app.get('/', (req, res) => {
+app.get('/api/search', (req, res) => {
     res.send('Server is working!');
 }); //test code to check if everything is working properly
 
