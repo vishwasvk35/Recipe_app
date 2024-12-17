@@ -1,5 +1,5 @@
 import { query } from "express";
-import * as dotenv from 'dotenv';
+import * as dotenv from 'dotenv'; //used to fetch apikey from .env
 dotenv.config();
 
 const apiKey = process.env.API_KEY;
