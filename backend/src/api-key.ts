@@ -4,7 +4,7 @@ dotenv.config();
 
 const apiKey = process.env.API_KEY;
 
-async function searchRecipe(searchTerm: string, pageNo: number) {
+export async function searchRecipe(searchTerm: string, pageNo: number) {
     if (!apiKey) {
         throw new Error("No API key");
     }
@@ -29,4 +29,24 @@ async function searchRecipe(searchTerm: string, pageNo: number) {
     }
 }
 
-export default searchRecipe;
+export async function summaryRecipe(recipeId:string) {
+    if (!apiKey) {
+        throw new Error("No API key");
+    }
+
+    const url = new URL(`https://api.spoonacular.com/recipes/${recipeId}/summary`);
+
+    const queryParams = {
+        apiKey: apiKey
+    };
+
+    url.search = new URLSearchParams(queryParams).toString();
+
+    try {
+        const searchResponse = await fetch(url.toString());
+        const resultJson = await searchResponse.json();
+        return resultJson;
+    } catch (error) {
+        console.error("Error during API call:", error);
+    }
+}
