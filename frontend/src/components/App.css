@@ -32,3 +32,9 @@
 .close-button {
   cursor: pointer;
 }
+
+.Tabs{
+  display: flex;
+  gap: 2em;
+  cursor: pointer;
+}

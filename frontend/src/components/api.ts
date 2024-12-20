@@ -35,3 +35,22 @@ export async function summaryRecipe(recipeId: string) {
 
     return data;
 }
+
+export async function getFavoriteRecipes(){
+    const baseUrl = new URL(`http://localhost:5000/api/recipe/favorite`);
+
+    console.log("fetching data from: ", baseUrl.toString());
+
+    const response = await fetch(baseUrl);
+    console.log(response);
+
+    if (!response.ok) {
+        console.log(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Fetched data api.ts:", data);
+
+    return data;
+}

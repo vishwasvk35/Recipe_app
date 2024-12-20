@@ -9,6 +9,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
 }
+
+model FavoriteRecipe {
+  Id Int @id @default(autoincrement())
+  RecipeId Int @unique
+}
+        
+
+//use following commands to save database:
+// cd backend
+// npx prisma db push

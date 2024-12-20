@@ -1,9 +1,11 @@
 import "./App.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as api from "./api";
 import { Recipe } from "./type";
 import Card from "./card";
 import RecipeModal from "./RecipeModal";
+
+type Tabs = "Search" | "Favorites";
 
 function App() {
   const [searchTerm, setSearchTerm] = useState<string>("paneer");
@@ -11,7 +13,23 @@ function App() {
   const [summaryToggle, setSummaryToggle] = useState<string | undefined>(
     undefined
   );
+  const [selectedTab, setSelectedTab] = useState<Tabs>("Search");
+  const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
   const pageNum = useRef(1);
+
+  useEffect(() => {
+    async function fetchFavoriteRecipes() {
+      try {
+        const favoriteRecipes = await api.getFavoriteRecipes();
+        console.log(favoriteRecipes);
+        setFavoriteRecipes(favoriteRecipes.results);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchFavoriteRecipes();
+  }, []);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const text = event.target.value;
@@ -48,28 +66,66 @@ function App() {
 
   return (
     <div>
-      <input
-        onChange={handleChange}
-        type="text"
-        name="searchTerm"
-        id="searchTerm"
-        placeholder="search recipe"
-      />
-      <button onClick={handleSubmit}>Search</button>
-      {recipes.map((recipe: Recipe) => (
+      <div className="Tabs">
+        <button
+          onClick={() => {
+            setSelectedTab("Search");
+          }}
+        >
+          Receipe search
+        </button>
+
+        <button
+          onClick={() => {
+            setSelectedTab("Favorites");
+          }}
+        >
+          Favorites
+        </button>
+      </div>
+
+      {selectedTab == "Search" ? (
+        <>
+          <input
+            onChange={handleChange}
+            type="text"
+            name="searchTerm"
+            id="searchTerm"
+            placeholder="search recipe"
+          />
+          <button onClick={handleSubmit}>Search</button>
+          {recipes.map((recipe: Recipe) => (
+            <div>
+              <Card recipe={recipe} />
+              <button onClick={() => handleSummary(String(recipe.id || ""))}>
+                summary
+              </button>
+            </div>
+          ))}
+
+          <button onClick={handleViewMore}>view more</button>
+        </>
+      ) : null}
+
+      {selectedTab == "Favorites" ? (
+        <>
+          <h1>This is favorites tab</h1>
+          {favoriteRecipes.map((recipe: Recipe) => (
+            <div>
+              <Card recipe={recipe} />
+              <button onClick={() => handleSummary(String(recipe.id || ""))}>
+                summary
+              </button>
+            </div>
+          ))}
+        </>
+      ) : null}
+
+      {summaryToggle ? (
         <div>
-          <Card recipe={recipe} />
-          <button onClick={() => 
-            handleSummary(String(recipe.id || ""))
-            }>
-            summary
-          </button>
+          <RecipeModal handleSummary={handleSummary} recipeId={summaryToggle} />
         </div>
-      ))}
-
-      <button onClick={handleViewMore}>view more</button>
-
-      {summaryToggle ? <div><RecipeModal handleSummary={handleSummary} recipeId={summaryToggle}/></div> : null}
+      ) : null}
     </div>
   );
 }
