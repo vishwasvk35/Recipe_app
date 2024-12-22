@@ -4,6 +4,7 @@ import * as api from "./api";
 import { Recipe } from "./type";
 import Card from "./card";
 import RecipeModal from "./RecipeModal";
+import { AiOutlineSearch } from "react-icons/ai";
 
 type Tabs = "Search" | "Favorites";
 
@@ -20,9 +21,9 @@ function App() {
   useEffect(() => {
     async function fetchFavoriteRecipes() {
       try {
-        const favoriteRecipes = await api.getFavoriteRecipes();
-        console.log(favoriteRecipes);
-        setFavoriteRecipes(favoriteRecipes.results);
+        const fetchedFavRecipes = await api.getFavoriteRecipes();
+        console.log(fetchedFavRecipes);
+        setFavoriteRecipes(fetchedFavRecipes.results);
       } catch (error) {
         console.log(error);
       }
@@ -64,44 +65,59 @@ function App() {
     setSummaryToggle(recipeId);
   }
 
+  async function addFavoriteRecipe(recipe: Recipe) {
+    try {
+      await api.addFavoriteRecipe(recipe);
+      setFavoriteRecipes([...favoriteRecipes, recipe]);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div>
-      <div className="Tabs">
-        <button
+      <div className="tabs">
+        <h1
           onClick={() => {
             setSelectedTab("Search");
           }}
         >
           Receipe search
-        </button>
+        </h1>
 
-        <button
+        <h1
           onClick={() => {
             setSelectedTab("Favorites");
           }}
         >
           Favorites
-        </button>
+        </h1>
       </div>
 
       {selectedTab == "Search" ? (
         <>
-          <input
-            onChange={handleChange}
-            type="text"
-            name="searchTerm"
-            id="searchTerm"
-            placeholder="search recipe"
-          />
-          <button onClick={handleSubmit}>Search</button>
-          {recipes.map((recipe: Recipe) => (
-            <div>
-              <Card recipe={recipe} />
-              <button onClick={() => handleSummary(String(recipe.id || ""))}>
-                summary
-              </button>
-            </div>
-          ))}
+          <div className="form">
+            <input
+              onChange={handleChange}
+              type="text"
+              name="searchTerm"
+              id="searchTerm"
+              placeholder="search recipe"
+            />
+            <button onClick={handleSubmit}>
+              <AiOutlineSearch size={40} />
+            </button>
+          </div>
+          <div className="recipe-grid">
+            {recipes.map((recipe: Recipe) => (
+              <div onClick={() => handleSummary(String(recipe.id || ""))}>
+                <Card
+                  onFavoriteButtonCLick={() => addFavoriteRecipe(recipe)}
+                  recipe={recipe}
+                />
+              </div>
+            ))}
+          </div>
 
           <button onClick={handleViewMore}>view more</button>
         </>
@@ -110,14 +126,16 @@ function App() {
       {selectedTab == "Favorites" ? (
         <>
           <h1>This is favorites tab</h1>
-          {favoriteRecipes.map((recipe: Recipe) => (
-            <div>
-              <Card recipe={recipe} />
-              <button onClick={() => handleSummary(String(recipe.id || ""))}>
-                summary
-              </button>
-            </div>
-          ))}
+          <div className="recipe-grid">
+            {favoriteRecipes.map((recipe: Recipe) => (
+              <div>
+                <Card recipe={recipe} />
+                <button onClick={() => handleSummary(String(recipe.id || ""))}>
+                  summary
+                </button>
+              </div>
+            ))}
+          </div>
         </>
       ) : null}
 

@@ -17,7 +17,6 @@ model FavoriteRecipe {
   Id Int @id @default(autoincrement())
   RecipeId Int @unique
 }
-        
 
 //use following commands to save database:
 // cd backend

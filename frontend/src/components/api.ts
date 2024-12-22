@@ -1,3 +1,5 @@
+import { Recipe } from "./type";
+
 export async function searchRecipe(searchTerm: string, pageNo: number) {
     const baseUrl = new URL("http://localhost:5000/api/search");
     baseUrl.searchParams.append("searchTerm", searchTerm);
@@ -53,4 +55,27 @@ export async function getFavoriteRecipes(){
     console.log("Fetched data api.ts:", data);
 
     return data;
+}
+
+export async function addFavoriteRecipe(recipe: Recipe){
+    const baseUrl = new URL(`http://localhost:5000/api/recipe/favorite`);
+    const body = {
+        recipeId: recipe.id
+    }
+
+    console.log("posting data to: ", baseUrl.toString());
+    const response = await fetch(baseUrl, {
+        method: "post",
+        headers: {
+            "Content-type" : "application/json",
+        },
+        body: JSON.stringify(body)
+    });
+
+    console.log(response);
+
+    if (!response.ok) {
+        console.log(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
 }
