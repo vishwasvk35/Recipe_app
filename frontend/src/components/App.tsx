@@ -74,6 +74,15 @@ function App() {
     }
   }
 
+  async function removeFavoriteRecipe(recipe: Recipe){
+    try {
+      await api.removeFavoriteRecipe(recipe);
+      setFavoriteRecipes(favoriteRecipes.filter((favRecipe) => {favRecipe.id == recipe.id}));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div>
       <div className="tabs">
@@ -109,14 +118,17 @@ function App() {
             </button>
           </div>
           <div className="recipe-grid">
-            {recipes.map((recipe: Recipe) => (
-              <div onClick={() => handleSummary(String(recipe.id || ""))}>
+            {recipes.map((recipe: Recipe) => {
+              const isFavorite = favoriteRecipes.some((favRecipe) => favRecipe.id === recipe.id);
+
+              return (<div onClick={() => handleSummary(String(recipe.id || ""))}>
                 <Card
+                isFavorite = {isFavorite}
                   onFavoriteButtonCLick={() => addFavoriteRecipe(recipe)}
                   recipe={recipe}
                 />
-              </div>
-            ))}
+              </div>);
+            })}
           </div>
 
           <button onClick={handleViewMore}>view more</button>

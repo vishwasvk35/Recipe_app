@@ -1,5 +1,5 @@
 import * as api from "./api";
-import { AiOutlineHeart } from "react-icons/ai";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 function Card(props) {
   return (
@@ -10,9 +10,21 @@ function Card(props) {
         <span
           onClick={(e) => {
             e.stopPropagation();
-          }}   
+          }}
         >
-          <AiOutlineHeart onClick={props.onFavoriteButtonCLick} fill="red" size={25} />
+          {props.isFavorite ? (
+            <AiFillHeart
+              onClick={props.onFavoriteButtonCLick}
+              fill="red"
+              size={25}
+            />
+          ) : (
+            <AiOutlineHeart
+              onClick={props.onFavoriteButtonCLick}
+              fill="red"
+              size={25}
+            />
+          )}
         </span>
       </h1>
     </div>
